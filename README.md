@@ -1,5 +1,8 @@
 # Chatbot Concierge #
 
+CS-GY 9923 FALL 2024 I
+Anitej Srivastava - as19440 
+
 ## About ##
 
 Frontend starter repository for HW 1 of the Cloud Computing & Big Data
