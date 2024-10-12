@@ -1,6 +1,6 @@
 # Chatbot Concierge #
 
-CS-GY 9923 FALL 2024 I
+CS-GY 9923 FALL 2024 I < br / >
 Anitej Srivastava - as19440 
 
 ## About ##
