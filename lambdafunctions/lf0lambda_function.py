@@ -1,8 +1,8 @@
 import json
 
 def lambda_handler(event, context):
-    body = json.loads(event['messages'])
-
+    # print("Event.body = ", event['body'])
+    body = event
     # Check if the messages key is present in the request
     if 'messages' in body:
         # Basic boilerplate response to return
@@ -12,7 +12,7 @@ def lambda_handler(event, context):
         bot_response = {
             "messages": [
                 {
-                    "type": "text",
+                    "type": "unstructured",
                     "unstructured": {
                         "id": "1",
                         "text": response_message,
