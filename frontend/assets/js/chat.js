@@ -18,7 +18,7 @@ $(document).ready(function() {
   }
 
   function setDate() {
-    d = new Date()
+    d = new Date();
     if (m != d.getMinutes()) {
       m = d.getMinutes();
       $('<div class="timestamp">' + d.getHours() + ':' + m + '</div>').appendTo($('.message:last'));
@@ -50,8 +50,12 @@ $(document).ready(function() {
     callChatbotApi(msg)
       .then((response) => {
         console.log(response);
-        var data = response.data;
 
+        // Parse the response body (it's a JSON string)
+        var data = JSON.parse(response.data.body);
+        console.log(data);
+
+        // Check if the 'messages' key is present in the parsed data
         if (data.messages && data.messages.length > 0) {
           console.log('received ' + data.messages.length + ' messages');
 
@@ -59,6 +63,7 @@ $(document).ready(function() {
 
           for (var message of messages) {
             if (message.type === 'unstructured') {
+              // Insert text from the unstructured message
               insertResponseMessage(message.unstructured.text);
             } else if (message.type === 'structured' && message.structured.type === 'product') {
               var html = '';
@@ -66,7 +71,7 @@ $(document).ready(function() {
               insertResponseMessage(message.structured.text);
 
               setTimeout(function() {
-                html = '<img src="' + message.structured.payload.imageUrl + '" witdth="200" height="240" class="thumbnail" /><b>' +
+                html = '<img src="' + message.structured.payload.imageUrl + '" width="200" height="240" class="thumbnail" /><b>' +
                   message.structured.payload.name + '<br>$' +
                   message.structured.payload.price +
                   '</b><br><a href="#" onclick="' + message.structured.payload.clickAction + '()">' +
@@ -96,7 +101,7 @@ $(document).ready(function() {
       insertMessage();
       return false;
     }
-  })
+  });
 
   function insertResponseMessage(content) {
     $('<div class="message loading new"><figure class="avatar"><img src="https://media.tenor.com/images/4c347ea7198af12fd0a66790515f958f/tenor.gif" /></figure><span></span></div>').appendTo($('.mCSB_container'));
