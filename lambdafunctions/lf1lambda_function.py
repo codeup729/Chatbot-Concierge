@@ -1,28 +1,20 @@
 import json
+import boto3
+import os
+
+# Initialize SQS client
+sqs = boto3.client('sqs')
+
+# Your SQS Queue URL (Q1)
+SQS_QUEUE_URL = os.environ.get('SQS_QUEUE_URL', 'https://sqs.us-east-1.amazonaws.com/054037138954/DiningSuggestionsQueue-Q1')
 
 def lambda_handler(event, context):
-    # Extract intent and slots from Lex V2 event
     intent_name = event['sessionState']['intent']['name']
     slots = event['sessionState']['intent']['slots']
     invocation_source = event['invocationSource']
 
-    if intent_name == "GreetingIntent":
-        return close(
-            session_attributes=event['sessionState'].get('sessionAttributes', {}),
-            fulfillment_state='Fulfilled',
-            message={'contentType': 'PlainText', 'content': 'Hi there! How can I help you today?'}
-        )
-
-    elif intent_name == "ThankYouIntent":
-        return close(
-            session_attributes=event['sessionState'].get('sessionAttributes', {}),
-            fulfillment_state='Fulfilled',
-            message={'contentType': 'PlainText', 'content': "You're welcome!"}
-        )
-
-    elif intent_name == "DiningSuggestionsIntent":
+    if intent_name == "DiningSuggestionsIntent":
         if invocation_source == 'DialogCodeHook':
-            # Perform validation or slot elicitation
             validation_result = validate_dining_suggestions(slots)
             if not validation_result['isValid']:
                 return elicit_slot(
@@ -32,19 +24,37 @@ def lambda_handler(event, context):
                     slot_to_elicit=validation_result['violatedSlot'],
                     message={'contentType': 'PlainText', 'content': validation_result['message']}
                 )
-            # If all slots are valid, delegate to Lex to prompt for next slot
             return delegate(
                 session_attributes=event['sessionState'].get('sessionAttributes', {}),
                 slots=slots
             )
         elif invocation_source == 'FulfillmentCodeHook':
-            # Fulfill the intent after all slots are filled
-            response_message = (
-                f"I see you're looking for {slots['Cuisine']['value']['interpretedValue']} restaurants "
-                f"in {slots['Location']['value']['interpretedValue']} for {slots['NumberOfPeople']['value']['interpretedValue']} "
-                f"people at {slots['DiningTime']['value']['interpretedValue']}. "
-                f"I'll send the suggestions to {slots['Email']['value']['interpretedValue']}."
+            # Collect user information from slots
+            location = slots['Location']['value']['interpretedValue']
+            cuisine = slots['Cuisine']['value']['interpretedValue']
+            dining_time = slots['DiningTime']['value']['interpretedValue']
+            number_of_people = slots['NumberOfPeople']['value']['interpretedValue']
+            email = slots['Email']['value']['interpretedValue']
+
+            # Push information to SQS queue
+            message_body = {
+                "Location": location,
+                "Cuisine": cuisine,
+                "DiningTime": dining_time,
+                "NumberOfPeople": number_of_people,
+                "Email": email
+            }
+
+            # Send message to SQS
+            response = sqs.send_message(
+                QueueUrl=SQS_QUEUE_URL,
+                MessageBody=json.dumps(message_body)
             )
+
+            response_message = (f"I see you're looking for {cuisine} restaurants in {location} "
+                                f"for {number_of_people} people at {dining_time}. "
+                                f"I will send the suggestions to {email} and the details have been added to the queue.")
+
             return close(
                 session_attributes=event['sessionState'].get('sessionAttributes', {}),
                 fulfillment_state='Fulfilled',
@@ -55,11 +65,10 @@ def lambda_handler(event, context):
         return close(
             session_attributes=event['sessionState'].get('sessionAttributes', {}),
             fulfillment_state='Failed',
-            message={'contentType': 'PlainText', 'content': "Sorry, I didn't understand that. Can you please rephrase?"}
+            message={'contentType': 'PlainText', 'content': "Sorry, I didn't understand that."}
         )
 
 def validate_dining_suggestions(slots):
-    # Implement slot validation logic
     required_slots = ['Location', 'Cuisine', 'DiningTime', 'NumberOfPeople', 'Email']
     for slot in required_slots:
         if slots.get(slot) is None or slots[slot].get('value') is None:
@@ -68,7 +77,6 @@ def validate_dining_suggestions(slots):
                 'violatedSlot': slot,
                 'message': f"Please provide {slot}."
             }
-    # All slots are valid
     return {'isValid': True}
 
 def elicit_slot(session_attributes, intent_name, slots, slot_to_elicit, message):
