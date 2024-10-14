@@ -60,7 +60,14 @@ def lambda_handler(event, context):
                 fulfillment_state='Fulfilled',
                 message={'contentType': 'PlainText', 'content': response_message}
             )
-
+        
+    elif intent_name == "ThankYouIntent":
+        return close(
+                session_attributes=event['sessionState'].get('sessionAttributes', {}),
+                fulfillment_state='Fulfilled',
+                message={'contentType': 'PlainText', 'content': "You're welcome!"}
+            )
+    
     else:
         return close(
             session_attributes=event['sessionState'].get('sessionAttributes', {}),
