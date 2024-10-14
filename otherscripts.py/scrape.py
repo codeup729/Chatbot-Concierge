@@ -19,7 +19,7 @@ dynamodb = boto3.resource(
 table = dynamodb.Table('yelp-restaurants')
 
 # Define your cuisine types and Manhattan search parameters
-cuisine_types = ['Chinese', 'Italian', 'Indian', 'Mexican', 'Japanese', 'American', 'Thai', 'Mediterranean']
+cuisine_types = ['Chinese', 'Italian', 'Indian', 'Mexican', 'Japanese', 'American', 'Mediterranean']
 params = {
     'location': 'Manhattan, NY',
     'limit': 50,
