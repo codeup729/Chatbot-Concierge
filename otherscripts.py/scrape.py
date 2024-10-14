@@ -2,6 +2,7 @@ import requests
 import boto3
 from datetime import datetime
 import time
+from decimal import Decimal
 
 # Set up Yelp API key and endpoint
 YELP_API_KEY = 'Ktf5TEcZteShnVVd4BxD1jdg8WMo2mj3bKT8ehVNVPaDsyI3w0stl35bz-FV5c7v3Ju4izdL_bzmaE8Au8sUwHG8pnl0frN_drp7c37moIedRl0uma7-fJ-lqUsNZ3Yx'
@@ -49,10 +50,13 @@ def store_in_dynamodb(restaurants, cuisine):
                 'BusinessID': restaurant['id'],
                 'Name': restaurant['name'],
                 'Address': ', '.join(restaurant['location']['display_address']),
-                'Coordinates': restaurant['coordinates'],
+                'Coordinates': {
+            'latitude': Decimal(str(restaurant['coordinates']['latitude'])),
+            'longitude': Decimal(str(restaurant['coordinates']['longitude']))
+        },
                 'Cuisine': cuisine,
                 'NumberOfReviews': restaurant['review_count'],
-                'Rating': restaurant['rating'],
+                'Rating': str(restaurant['rating']),
                 'ZipCode': restaurant['location']['zip_code'],
                 'insertedAtTimestamp': datetime.utcnow().isoformat()
             }
