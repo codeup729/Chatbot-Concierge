@@ -91,37 +91,37 @@ def get_restaurant_from_dynamodb(business_id, cuisine):
     return None
 
 # Function to send an email with SES
-# def send_email(email, restaurant_details):
-#     subject = f"Your {restaurant_details['cuisine']} Restaurant Recommendation"
-#     body = (
-#         f"Here is a random {restaurant_details['cuisine']} restaurant recommendation for you:\n\n"
-#         f"Name: {restaurant_details['name']}\n"
-#         f"Address: {restaurant_details['address']}\n"
-#         f"Rating: {restaurant_details['rating']}\n"
-#         f"Number of Reviews: {restaurant_details['num_reviews']}\n\n"
-#         f"Enjoy your meal!"
-#     )
+def send_email(email, restaurant_details):
+    subject = f"Your {restaurant_details['Cuisine']} Restaurant Recommendation"
+    body = (
+        f"Here is a random {restaurant_details['Cuisine']} restaurant recommendation for you:\n\n"
+        f"Name: {restaurant_details['Name']}\n"
+        f"Address: {restaurant_details['Address']}\n"
+        f"Rating: {restaurant_details['Rating']}\n"
+        f"Number of Reviews: {restaurant_details['NumberOfReviews']}\n\n"
+        f"Enjoy your meal!"
+    )
     
-#     try:
-#         response = ses.send_email(
-#             Source='anitej',  # Must be a verified email in SES
-#             Destination={
-#                 'ToAddresses': [email],
-#             },
-#             Message={
-#                 'Subject': {
-#                     'Data': subject
-#                 },
-#                 'Body': {
-#                     'Text': {
-#                         'Data': body
-#                     }
-#                 }
-#             }
-#         )
-#         print(f"Email sent to {email} with response: {response}")
-#     except ClientError as e:
-#         print(f"Error sending email: {e}")
+    try:
+        response = ses.send_email(
+            Source='anitejsri22@gmail.com',  # Must be a verified email in SES
+            Destination={
+                'ToAddresses': [email],
+            },
+            Message={
+                'Subject': {
+                    'Data': subject
+                },
+                'Body': {
+                    'Text': {
+                        'Data': body
+                    }
+                }
+            }
+        )
+        print(f"Email sent to {email} with response: {response}")
+    except ClientError as e:
+        print(f"Error sending email: {e}")
 
 # Main Lambda handler
 def lambda_handler(event, context):
@@ -137,9 +137,9 @@ def lambda_handler(event, context):
         
         if restaurant_details:
             print(restaurant_details)
-        #     # Step 4: Send the restaurant details via email using SES
-        #     send_email(email, restaurant_details)
-        # else:
-        #     print(f"No restaurant details found in DynamoDB for BusinessID {business_id}")
+            # Step 4: Send the restaurant details via email using SES
+            send_email(email, restaurant_details)
+        else:
+            print(f"No restaurant details found in DynamoDB for BusinessID {business_id}")
     else:
         print(f"No restaurants found in OpenSearch for cuisine {cuisine}")
