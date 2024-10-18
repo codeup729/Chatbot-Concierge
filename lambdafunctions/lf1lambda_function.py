@@ -79,7 +79,38 @@ def validate_dining_suggestions(slots):
     required_slots = ['Location', 'Cuisine', 'DiningTime', 'NumberOfPeople', 'Email']
     for slot in required_slots:
         if slots.get(slot) is None or slots[slot].get('value') is None:
-            return {
+            if(slot == "Location"):
+                return {
+                    'isValid': False,
+                    'violatedSlot': slot,
+                    'message': f"For which location do you want a suggestion?"
+                }
+            elif(slot == "Cuisine"):
+                return {
+                'isValid': False,
+                'violatedSlot': slot,
+                'message': f"Which cuisine are you interested in?"
+            }
+            elif(slot == "DiningTime"):
+                return {
+                'isValid': False,
+                'violatedSlot': slot,
+                'message': f"When do you want to dine?"
+            }
+            elif(slot == "NumberOfPeople"):
+                return {
+                'isValid': False,
+                'violatedSlot': slot,
+                'message': f"How many people are present?"
+            }
+            elif(slot == "Email"):
+                return {
+                'isValid': False,
+                'violatedSlot': slot,
+                'message': f"Please enter your email."
+            }
+            else:
+                return {
                 'isValid': False,
                 'violatedSlot': slot,
                 'message': f"Please provide {slot}."
