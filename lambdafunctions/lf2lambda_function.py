@@ -92,7 +92,7 @@ def get_restaurant_from_dynamodb(business_id, cuisine):
 
 # Function to send an email with SES
 def send_email(email, restaurant_details):
-    subject = f"Your {restaurant_details['cuisine']} Restaurant Recommendation"
+    subject = f"Your {restaurant_details['Cuisine']} Restaurant Recommendation"
     body = (
         f"Here is a random {restaurant_details['Cuisine']} restaurant recommendation for you:\n\n"
         f"Name: {restaurant_details['Name']}\n"
