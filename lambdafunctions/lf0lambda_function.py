@@ -60,7 +60,7 @@ def call_lex_bot(user_message):
     # Call the Lex bot using the Boto3 Lex V2 Runtime client
     response = lex_client.recognize_text(
         botId='LTMIBTN7U9',              # Replace with your Lex bot ID
-        botAliasId='TSTALIASID',   # Replace with your Lex bot alias ID
+        botAliasId='W7LKX5FMYZ',   # Replace with your Lex bot alias ID
         localeId='en_US',                 # Adjust if you're using a different locale
         sessionId=sessionId,      # Use a unique session ID for each user or conversation
         text=user_message                 # The user's message text
