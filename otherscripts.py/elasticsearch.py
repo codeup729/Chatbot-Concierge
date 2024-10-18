@@ -6,7 +6,7 @@ from requests_aws4auth import AWS4Auth
 
 access_key = 'AKIAQZFG5JYFOWX7IPWN'
 secret_key = 'cUYO45lmYXiV9CznJiVLvM5HvJaVv165xYs2Q5kq'
-region = 'us-east-1'  # Replace with your AWS region
+region = 'us-east-1'  
 
 awsauth = AWS4Auth(access_key, secret_key, region, 'es')
 
@@ -64,7 +64,7 @@ def fetch_dynamodb_items():
 def prepare_opensearch_data(items):
     opensearch_data = []
     for item in items:
-        # OpenSearch expects data in JSON format
+        
         document = {
             'BusinessID': item.get('BusinessID'),
             'Cuisine': item.get('Cuisine')
@@ -76,7 +76,7 @@ def index_data_to_opensearch(documents):
     headers = {"Content-Type": "application/json"}
 
     for doc in documents:
-        # Construct the OpenSearch URL
+        
         url = f"{opensearch_host}/{index_name}/{doc_type}/"
 
         # Post the document to OpenSearch

@@ -6,23 +6,23 @@ from requests_aws4auth import AWS4Auth
 import requests
 from botocore.exceptions import ClientError
 
-# Get AWS credentials
+
 access_key = 'AKIAQZFG5JYFOWX7IPWN'
 secret_key = 'cUYO45lmYXiV9CznJiVLvM5HvJaVv165xYs2Q5kq'
-region = 'us-east-1'  # e.g., 'us-east-1'
+region = 'us-east-1'  
 
-# Set up AWS authentication for OpenSearch
+
 awsauth = AWS4Auth(access_key, secret_key, region, 'es')
 
-# Set up OpenSearch endpoint (replace with your OpenSearch domain endpoint)
+
 opensearch_endpoint = 'https://search-restaurants-oomvx7sjeke3puuq6o2lpqprsu.aos.us-east-1.on.aws'
 
-# Set up DynamoDB client
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('yelp-restaurants')  # Name of your DynamoDB table
 
-# Set up SES client
-ses = boto3.client('ses', region_name='us-east-1')  # Replace with your SES region
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('yelp-restaurants')  
+
+
+ses = boto3.client('ses', region_name='us-east-1')  
 
 # Function to pull a message from SQS
 def pull_sqs_message(event):
@@ -78,9 +78,9 @@ def get_restaurant_from_dynamodb(business_id, cuisine):
 
 # Check if any items are returned
         if 'Items' in response and len(response['Items']) > 0:
-            # Select a random item from the returned items
+            
             random_item = random.choice(response['Items'])
-            # Print the randomly selected item
+            
             return random_item
         else:
             print(f"No items found for BusinessID: {business_id}")
@@ -104,7 +104,7 @@ def send_email(email, restaurant_details):
     
     try:
         response = ses.send_email(
-            Source='anitejsri22@gmail.com',  # Must be a verified email in SES
+            Source='anitejsri22@gmail.com',  
             Destination={
                 'ToAddresses': [email],
             },
@@ -123,7 +123,7 @@ def send_email(email, restaurant_details):
     except ClientError as e:
         print(f"Error sending email: {e}")
 
-# Main Lambda handler
+
 def lambda_handler(event, context):
     # Step 1: Pull the message from the SQS queue
     cuisine, email = pull_sqs_message(event)

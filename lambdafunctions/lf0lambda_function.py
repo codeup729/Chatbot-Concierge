@@ -11,7 +11,7 @@ def lambda_handler(event, context):
     body = event
     # Check if the messages key is present in the request
     if 'messages' in body:
-        # Basic boilerplate response to return
+        
         user_message = body['messages'][0]['unstructured']['text']
         response_message = "I'm still under development. Please come back later."
 
@@ -59,10 +59,10 @@ def lambda_handler(event, context):
 def call_lex_bot(user_message):
     # Call the Lex bot using the Boto3 Lex V2 Runtime client
     response = lex_client.recognize_text(
-        botId='LTMIBTN7U9',              # Replace with your Lex bot ID
-        botAliasId='W7LKX5FMYZ',   # Replace with your Lex bot alias ID
-        localeId='en_US',                 # Adjust if you're using a different locale
-        sessionId=sessionId,      # Use a unique session ID for each user or conversation
-        text=user_message                 # The user's message text
+        botId='LTMIBTN7U9',             
+        botAliasId='W7LKX5FMYZ',   
+        localeId='en_US',                
+        sessionId=sessionId,      
+        text=user_message                 
     )
     return response

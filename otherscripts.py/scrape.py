@@ -9,7 +9,7 @@ YELP_API_KEY = 'Ktf5TEcZteShnVVd4BxD1jdg8WMo2mj3bKT8ehVNVPaDsyI3w0stl35bz-FV5c7v
 headers = {'Authorization': f'Bearer {YELP_API_KEY}'}
 base_url = 'https://api.yelp.com/v3/businesses/search'
 
-# Set up AWS DynamoDB
+
 dynamodb = boto3.resource(
     'dynamodb',
     aws_access_key_id='AKIAQZFG5JYFOWX7IPWN',
@@ -18,7 +18,7 @@ dynamodb = boto3.resource(
 )
 table = dynamodb.Table('yelp-restaurants')
 
-# Define your cuisine types and Manhattan search parameters
+
 cuisine_types = ['Chinese', 'Italian', 'Indian', 'Mexican', 'Japanese', 'American', 'Mediterranean']
 params = {
     'location': 'Manhattan, NY',
@@ -39,7 +39,7 @@ def fetch_restaurants(cuisine):
             break
         restaurants.extend(data['businesses'])
         params['offset'] += 50
-        time.sleep(1)  # Avoid hitting rate limits
+        time.sleep(1)  # Avoids hitting rate limits
     return restaurants
 
 # Function to store restaurant data in DynamoDB
@@ -64,7 +64,7 @@ def store_in_dynamodb(restaurants, cuisine):
         except Exception as e:
             print(f"Error storing item: {e}")
 
-# Main loop to fetch and store restaurants by cuisine
+
 for cuisine in cuisine_types:
     restaurants = fetch_restaurants(cuisine)
     store_in_dynamodb(restaurants, cuisine)

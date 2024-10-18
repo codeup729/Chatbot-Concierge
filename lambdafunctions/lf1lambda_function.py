@@ -6,13 +6,13 @@ import os
 sqs = boto3.client('sqs')
 dynamodb = boto3.resource('dynamodb')
 
-# Your SQS Queue URL (Q1)
+
 SQS_QUEUE_URL = os.environ.get('SQS_QUEUE_URL', 'https://sqs.us-east-1.amazonaws.com/054037138954/DiningSuggestionsQueue-Q1')
 
 # DynamoDB Table name
 DYNAMODB_TABLE = 'previous_preference'
 PARTITION_KEY = 'Previous'
-UNIQUE_ID = 'unique_id_previous'  # Constant unique ID
+UNIQUE_ID = 'unique_id_previous'  
 
 def lambda_handler(event, context):
     intent_name = event['sessionState']['intent']['name']
