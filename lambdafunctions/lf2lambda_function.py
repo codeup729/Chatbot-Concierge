@@ -26,8 +26,10 @@ ses = boto3.client('ses', region_name='us-east-1')  # Replace with your SES regi
 
 # Function to pull a message from SQS
 def pull_sqs_message(event):
+    print(event)
     # Extract the message body from the SQS event
-    for record in event['Records'][0]:
+    for record in event['Records']:
+        print(f"Current Record: {record}")
         message_body = json.loads(record['body'])
         cuisine = message_body['Cuisine']
         email = message_body['Email']
@@ -66,11 +68,22 @@ def get_random_restaurant_es(cuisine):
     return None
 
 # Function to get restaurant details from DynamoDB using BusinessID
-def get_restaurant_from_dynamodb(business_id):
+def get_restaurant_from_dynamodb(business_id, cuisine):
     try:
         # Get the restaurant details from DynamoDB
-        response = table.get_item(Key={'BusinessID': business_id})
-        return response.get('Item', None)
+        response = table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('BusinessID').eq(business_id),
+            FilterExpression=boto3.dynamodb.conditions.Attr('Cuisine').eq(cuisine)
+        )
+
+# Check if any items are returned
+        if 'Items' in response and len(response['Items']) > 0:
+            # Select a random item from the returned items
+            random_item = random.choice(response['Items'])
+            # Print the randomly selected item
+            return random_item
+        else:
+            print(f"No items found for BusinessID: {business_id}")
     
     except ClientError as e:
         print(f"Error fetching from DynamoDB: {e}")
@@ -120,7 +133,7 @@ def lambda_handler(event, context):
     
     if business_id:
         # Step 3: Get the restaurant details from DynamoDB
-        restaurant_details = get_restaurant_from_dynamodb(business_id)
+        restaurant_details = get_restaurant_from_dynamodb(business_id, cuisine)
         
         if restaurant_details:
             print(restaurant_details)
