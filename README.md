@@ -5,8 +5,7 @@ Anitej Srivastava - as19440
 
 ## About ##
 
-Frontend starter repository for HW 1 of the Cloud Computing & Big Data
-class at Columbia University and New York University.
+Repository for HW 1 of the Cloud Computing at New York University.
 
 ## Usage ##
 
