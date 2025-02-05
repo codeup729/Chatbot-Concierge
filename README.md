@@ -11,22 +11,38 @@ Anitej Srivastava - as19440
 ![OpenSearch](https://img.shields.io/badge/OpenSearch-Search-green?style=for-the-badge&logo=opensearch)
 ![DynamoDB](https://img.shields.io/badge/DynamoDB-NoSQL-blue?style=for-the-badge&logo=amazondynamodb)
 ![S3](https://img.shields.io/badge/S3-Storage-red?style=for-the-badge&logo=amazons3)
+![AWS SQS](https://img.shields.io/badge/AWS%20SQS-Queue%20Processing-blueviolet?style=for-the-badge&logo=amazonaws)
 ![Swagger](https://img.shields.io/badge/Swagger-API%20Documentation-brightgreen?style=for-the-badge&logo=swagger)
 
 ## Overview
 
-**Chatbot Concierge** is a serverless, event-driven application designed to provide restaurant recommendations in Manhattan based on user dining preferences. Leveraging various AWS services, the chatbot interacts with users, processes their inputs, and delivers tailored suggestions.
+**Chatbot Concierge** is a serverless, event-driven application designed to provide **restaurant recommendations in Manhattan** based on user dining preferences. The chatbot interacts with users, processes their inputs, and delivers tailored suggestions. 
+
+- **Amazon Lex** is used to **map user intents**, understand queries, and trigger appropriate responses.
+- **A separate AWS Lambda function** is invoked to process the **recognized intents** and retrieve relevant restaurant recommendations.
+- **AWS SQS** is used to store **scraped Yelp restaurant data** (location, cuisine), which then triggers another **Lambda function** to **vectorize and index the data in OpenSearch**.
 
 ## Key Features
 
-- **Natural Language Processing**: Utilizes **Amazon Lex** to understand and process user inputs.
-- **Serverless Architecture**: Employs **AWS Lambda** for backend processing, ensuring scalability and cost-effectiveness.
-- **API Management**: **Amazon API Gateway** facilitates secure and efficient API interactions.
-- **Data Storage and Retrieval**:
-  - **Amazon S3**: Stores scraped Yelp data and other assets.
-  - **Amazon DynamoDB**: Serves as a NoSQL database for quick data access.
-  - **Amazon OpenSearch**: Provides advanced search capabilities for restaurant data.
-- **API Documentation**: **Swagger** is used for comprehensive API documentation, ensuring clarity and ease of use.
+- **Intent Mapping with Amazon Lex**:  
+  - Lex classifies **user intents** (e.g., "Find a restaurant near me", "Show Italian restaurants").
+  - Once an intent is identified, Lex triggers a **Lambda function** for fulfillment.
+  
+- **Intent Processing with AWS Lambda**:  
+  - A dedicated **Lambda function processes user requests**, queries OpenSearch, and retrieves the best restaurant recommendations.
+
+- **Data Pipeline & Processing**:
+  - **AWS SQS**: Stores all Yelp restaurant data (location, cuisine) and triggers a **Lambda function**.
+  - **Lambda + boto3 SDK**: Processes messages from SQS, vectorizes restaurant data, and indexes it in **OpenSearch**.
+  - **Amazon OpenSearch**: Enables **fast and efficient** search for restaurant recommendations.
+
+- **Data Storage**:
+  - **Amazon S3**: Stores scraped Yelp data and assets.
+  - **Amazon DynamoDB**: Serves as a NoSQL database for quick data retrieval.
+
+- **API Management & Documentation**:
+  - **Amazon API Gateway**: Facilitates secure and efficient API interactions.
+  - **Swagger**: Provides clear and structured API documentation.
 
 ## Architecture Diagram
 
@@ -34,7 +50,10 @@ Anitej Srivastava - as19440
 User
   |
   v
-Amazon Lex Chatbot
+Amazon Lex (Intent Mapping)
+  |
+  v
+AWS Lambda (Intent Processing)
   |
   v
 API Gateway
@@ -48,6 +67,12 @@ AWS Lambda Functions
 |---------------------------|
 | DynamoDB | OpenSearch | S3|
 +---------------------------+
+  |
+  v
+AWS SQS (Yelp Data Queue)
+  |
+  v
+Lambda (Vectorizes & Indexes Data in OpenSearch)
 ```
 
 
